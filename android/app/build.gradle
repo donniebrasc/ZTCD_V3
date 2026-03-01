@@ -57,9 +57,30 @@ android {
         manifestPlaceholders = [MAPS_API_KEY: mapsKey]
     }
 
+    signingConfigs {
+        release {
+            def keystorePath  = System.getenv('KEYSTORE_PATH') ?: ''
+            def keystorePass  = System.getenv('ANDROID_KEYSTORE_PASSWORD') ?: ''
+            def keyAliasValue = System.getenv('ANDROID_KEY_ALIAS') ?: ''
+            def keyPass       = System.getenv('ANDROID_KEY_PASSWORD') ?: ''
+            if (keystorePath) {
+                if (!keystorePass || !keyAliasValue || !keyPass) {
+                    throw new GradleException(
+                        "KEYSTORE_PATH is set but one or more signing variables are missing: " +
+                        "ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD")
+                }
+                storeFile     file(keystorePath)
+                storePassword keystorePass
+                keyAlias      keyAliasValue
+                keyPassword   keyPass
+            }
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            def keystorePath = System.getenv('KEYSTORE_PATH') ?: ''
+            signingConfig keystorePath ? signingConfigs.release : signingConfigs.debug
             minifyEnabled false
         }
     }
