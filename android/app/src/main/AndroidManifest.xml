@@ -40,10 +40,14 @@
             </intent-filter>
         </activity>
 
-        <!-- Google Maps API Key - replace YOUR_MAPS_API_KEY with actual key -->
+        <!-- Google Maps API Key.
+             Set at build time via: flutter build apk --dart-define=MAPS_API_KEY=AIza...
+             The Gradle build script reads MAPS_API_KEY and writes it here automatically.
+             For development without a key, the map widget shows a "No API Key" watermark
+             but all other features work normally. -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_MAPS_API_KEY" />
+            android:value="${MAPS_API_KEY}" />
 
         <meta-data
             android:name="flutterEmbedding"

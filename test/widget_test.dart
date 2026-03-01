@@ -11,9 +11,9 @@ void main() {
       (WidgetTester tester) async {
     await tester.pumpWidget(const ZTCDApp());
     expect(find.byType(NavigationBar), findsOneWidget);
-    expect(find.text('Diagnosis'), findsOneWidget);
-    expect(find.text('Damage Log'), findsOneWidget);
-    expect(find.text('GPS Routes'), findsOneWidget);
+    expect(find.text('DIAGNOSIS'), findsOneWidget);
+    expect(find.text('DAMAGE'), findsOneWidget);
+    expect(find.text('ROUTES'), findsOneWidget);
   });
 
   group('OBDData', () {

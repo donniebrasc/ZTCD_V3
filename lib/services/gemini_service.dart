@@ -8,11 +8,49 @@ class GeminiService {
 
   final _settings = SettingsService();
 
+  // ── Demo-mode responses (shown when no API key is configured) ─────────────
+
+  static const String _demoDiagnostics = '''
+⚠️  DEMO MODE – Add your Gemini API key in Settings for live AI analysis.
+
+VEHICLE STATUS SUMMARY (Simulated)
+────────────────────────────────────
+• Engine RPM: Within normal operating range.
+• Coolant Temperature: Normal. No overheating detected.
+• Engine Load: Moderate. Consistent with city driving.
+• Fuel Level: Adequate for current trip.
+• Battery Voltage: Healthy charging system detected.
+
+RECOMMENDATIONS
+• Schedule routine oil change if mileage exceeds 5,000 km since last service.
+• Check tyre pressures monthly for optimal fuel economy.
+• No fault codes detected in this simulation session.
+
+To enable real AI diagnostics, tap ⚙ Settings and enter your free
+Google Gemini API key (1,500 free requests/day at ai.google.dev).
+''';
+
+  static const String _demoRouteRecommendation = '''
+⚠️  DEMO MODE – Add your Gemini API key in Settings for live route analysis.
+
+ROUTE ANALYSIS (Simulated)
+────────────────────────────
+Based on simulated trip data, Route A shows lower average damage scores,
+suggesting smoother road surfaces and fewer harsh-braking events.
+
+RECOMMENDATION
+• Prefer routes with lower speed variance and fewer sharp turns.
+• Avoid routes with high historical damage scores during peak hours.
+
+Enable live AI route recommendations by adding your free Gemini API key
+in ⚙ Settings.
+''';
+
+  // ─────────────────────────────────────────────────────────────────────────
+
   Future<String> runDiagnostics(String obdDataPrompt) async {
     final apiKey = await _settings.getGeminiApiKey();
-    if (apiKey == null || apiKey.isEmpty) {
-      return 'No Gemini API key configured. Please add your API key in Settings.';
-    }
+    if (apiKey.isEmpty) return _demoDiagnostics;
 
     try {
       final model = GenerativeModel(
@@ -41,9 +79,7 @@ class GeminiService {
 
   Future<String> getRouteRecommendation(String routeSummary) async {
     final apiKey = await _settings.getGeminiApiKey();
-    if (apiKey == null || apiKey.isEmpty) {
-      return 'No Gemini API key configured. Please add your API key in Settings.';
-    }
+    if (apiKey.isEmpty) return _demoRouteRecommendation;
 
     try {
       final model = GenerativeModel(
