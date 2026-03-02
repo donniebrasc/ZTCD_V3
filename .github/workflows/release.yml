@@ -1,5 +1,13 @@
 name: Build & Release Android APK
 
+# Required secrets for signed release builds (all four must be set together):
+#   ANDROID_KEYSTORE_BASE64    – base64-encoded keystore file (base64 -w0 release.jks)
+#   ANDROID_KEYSTORE_PASSWORD  – keystore password
+#   ANDROID_KEY_ALIAS          – key alias inside the keystore
+#   ANDROID_KEY_PASSWORD       – key password
+# Optional:
+#   MAPS_API_KEY               – Google Maps API key (build succeeds without it)
+
 on:
   push:
     branches:
@@ -31,11 +39,28 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
-      - name: Decode keystore
+      - name: Validate and decode keystore
+        # Sets KEYSTORE_PATH in $GITHUB_ENV only when all four signing secrets
+        # are present.  Fails fast with a descriptive error if the keystore
+        # secret is supplied but any of the other three are missing, which
+        # would otherwise cause a cryptic Gradle error later.
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          if [ -n "${ANDROID_KEYSTORE_BASE64}" ]; then
+          set -euo pipefail
+          if [ -n "${ANDROID_KEYSTORE_BASE64:-}" ]; then
+            missing=""
+            [ -z "${ANDROID_KEYSTORE_PASSWORD:-}" ] && missing="${missing} ANDROID_KEYSTORE_PASSWORD"
+            [ -z "${ANDROID_KEY_ALIAS:-}"          ] && missing="${missing} ANDROID_KEY_ALIAS"
+            [ -z "${ANDROID_KEY_PASSWORD:-}"       ] && missing="${missing} ANDROID_KEY_PASSWORD"
+            if [ -n "${missing}" ]; then
+              echo "::error::ANDROID_KEYSTORE_BASE64 is set but the following required signing secrets are missing:${missing}"
+              echo "::error::All four signing secrets must be configured together in Settings → Secrets and variables → Actions."
+              exit 1
+            fi
             KEYSTORE_PATH="${RUNNER_TEMP}/release.jks"
             echo "${ANDROID_KEYSTORE_BASE64}" | base64 --decode > "${KEYSTORE_PATH}"
             echo "KEYSTORE_PATH=${KEYSTORE_PATH}" >> "$GITHUB_ENV"
@@ -49,6 +74,7 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
         run: |
+          set -euo pipefail
           flutter build apk --release \
             ${MAPS_API_KEY:+--dart-define=MAPS_API_KEY=$MAPS_API_KEY}
 

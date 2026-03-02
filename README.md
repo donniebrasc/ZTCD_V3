@@ -20,13 +20,16 @@ Keep `release.jks` **out of version control** (it is already ignored via `.gitig
 
 In the repository → **Settings → Secrets and variables → Actions**, add:
 
-| Secret name | Value |
-|---|---|
-| `ANDROID_KEYSTORE_BASE64` | `base64 -w 0 release.jks` output |
-| `ANDROID_KEYSTORE_PASSWORD` | keystore password |
-| `ANDROID_KEY_ALIAS` | key alias (e.g. `my-key-alias`) |
-| `ANDROID_KEY_PASSWORD` | key password |
-| `MAPS_API_KEY` | *(optional)* Google Maps API key |
+| Secret name | Required | Value |
+|---|---|---|
+| `ANDROID_KEYSTORE_BASE64` | ✅ yes | `base64 -w 0 release.jks` output |
+| `ANDROID_KEYSTORE_PASSWORD` | ✅ yes | keystore password |
+| `ANDROID_KEY_ALIAS` | ✅ yes | key alias (e.g. `my-key-alias`) |
+| `ANDROID_KEY_PASSWORD` | ✅ yes | key password |
+| `MAPS_API_KEY` | ☐ optional | Google Maps API key |
+
+> **All four signing secrets must be configured together.**  
+> The workflow will fail fast with a clear error message if `ANDROID_KEYSTORE_BASE64` is present but any of the other three are missing, rather than allowing a cryptic Gradle error to surface later.
 
 ### 3. Run a local signed build
 
@@ -48,6 +51,9 @@ If `KEYSTORE_PATH` is not set the build falls back to the debug signing config a
 The workflow `.github/workflows/release.yml` runs automatically on every push to `main` (and can be triggered manually via **Actions → Run workflow**).
 
 It will:
-1. Decode `ANDROID_KEYSTORE_BASE64` to a temporary file.
-2. Build `app-release.apk` using the release signing config.
-3. Create (or update) the GitHub Release tagged **`ZTCDv1.0BETA`** and attach the APK.
+1. Verify that **all four** signing secrets are present. If `ANDROID_KEYSTORE_BASE64` is set but any of the other three secrets are missing it **fails immediately** with a clear error — no cryptic Gradle message.
+2. Decode `ANDROID_KEYSTORE_BASE64` to a temporary file and export `KEYSTORE_PATH`.
+3. Build `app-release.apk` using the release signing config.
+4. Create (or update) the GitHub Release tagged **`ZTCDv1.0BETA`** and attach the APK.
+
+If **none** of the signing secrets are configured the build will still succeed but the APK will be signed with the debug key (not suitable for Play Store distribution).
