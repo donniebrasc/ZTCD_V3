@@ -78,7 +78,8 @@ android {
         release {
             def keystorePath = System.getenv('KEYSTORE_PATH') ?: ''
             signingConfig keystorePath ? signingConfigs.release : signingConfigs.debug
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
         }
     }
 }
