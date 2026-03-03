@@ -39,6 +39,10 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
+      - name: Install Android SDK 36
+        run: |
+          echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-36"
+
       - name: Validate and decode keystore
         # Sets KEYSTORE_PATH in $GITHUB_ENV only when all four signing secrets
         # are present.  Fails fast with a descriptive error if the keystore
