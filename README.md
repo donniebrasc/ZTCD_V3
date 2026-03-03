@@ -3,6 +3,31 @@ Comprehensive multi-platform Flutter app for diagnostics using OBD-II, phone sen
 
 ---
 
+## Vendored dependency: `flutter_bluetooth_serial`
+
+`flutter_bluetooth_serial` 0.4.0 (the latest published version) is missing the
+`android { namespace "..." }` declaration required by Android Gradle Plugin 8+.
+Until a fixed version is published upstream, this repo vendors a patched copy
+under `third_party/flutter_bluetooth_serial/` that adds only the namespace line.
+
+`pubspec.yaml` uses `dependency_overrides` to point Flutter at the local copy:
+
+```yaml
+dependency_overrides:
+  flutter_bluetooth_serial:
+    path: third_party/flutter_bluetooth_serial
+```
+
+The vendored copy is identical to the 0.4.0 release except for:
+- `android/build.gradle`: added `namespace 'io.github.edufolly.flutterbluetoothserial'` inside `android { … }`
+- `pubspec.yaml`: broadened the Dart SDK constraint to `'>=2.12.0 <4.0.0'`
+
+When an upstream release that includes the namespace fix is published, remove
+the `third_party/` directory and the `dependency_overrides` block from
+`pubspec.yaml`.
+
+---
+
 ## Signed Android Releases
 
 ### 1. Generate a keystore (one-time, developer)
