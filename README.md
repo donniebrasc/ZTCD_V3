@@ -51,9 +51,17 @@ If `KEYSTORE_PATH` is not set the build falls back to the debug signing config a
 The workflow `.github/workflows/release.yml` runs automatically on every push to `main` (and can be triggered manually via **Actions → Run workflow**).
 
 It will:
-1. Verify that **all four** signing secrets are present. If `ANDROID_KEYSTORE_BASE64` is set but any of the other three secrets are missing it **fails immediately** with a clear error — no cryptic Gradle message.
-2. Decode `ANDROID_KEYSTORE_BASE64` to a temporary file and export `KEYSTORE_PATH`.
-3. Build `app-release.apk` using the release signing config.
-4. Create (or update) the GitHub Release tagged **`ZTCDv1.0BETA`** and attach the APK.
+1. **Always** build a debug APK (`app-debug.apk`) and upload it as a workflow artifact — no signing secrets required.
+2. If **all four** signing secrets are configured, also build a release APK and publish/update the GitHub Release tagged **`ZTCDv1.0BETA`**.
+   - If `ANDROID_KEYSTORE_BASE64` is set but any of the other three secrets are missing, the workflow **fails immediately** with a clear error — no cryptic Gradle message.
 
-If **none** of the signing secrets are configured the build will still succeed but the APK will be signed with the debug key (not suitable for Play Store distribution).
+If **none** of the signing secrets are configured the debug artifact is still produced and available to download.
+
+### 5. Downloading the debug APK from GitHub Actions
+
+1. Go to the repository on GitHub → **Actions**.
+2. Click on any **Build & Release Android APK** workflow run.
+3. Scroll to the bottom of the run summary page to the **Artifacts** section.
+4. Click **`app-debug-apk`** to download the ZIP containing `app-debug.apk`.
+
+> **Note:** The debug APK is signed with the Android debug key. It can be sideloaded on Android devices (enable *Install unknown apps* in Settings) but is **not suitable for Google Play Store distribution**.

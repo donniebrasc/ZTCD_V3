@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-    name: Build signed APK and publish release
+    name: Build APK and publish release
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -66,7 +66,25 @@ jobs:
             echo "KEYSTORE_PATH=${KEYSTORE_PATH}" >> "$GITHUB_ENV"
           fi
 
+      # Debug APK – always built; does not require any signing secrets.
+      # Download from: Actions run → Artifacts → app-debug-apk
+      - name: Build debug APK
+        env:
+          MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+        run: |
+          set -euo pipefail
+          flutter build apk --debug \
+            ${MAPS_API_KEY:+--dart-define=MAPS_API_KEY=$MAPS_API_KEY}
+
+      - name: Upload debug APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          # Artifact is debug-signed; suitable for sideloading and testing only.
+          path: build/app/outputs/flutter-apk/app-debug.apk
+
       - name: Build release APK
+        if: env.KEYSTORE_PATH != ''
         env:
           KEYSTORE_PATH: ${{ env.KEYSTORE_PATH }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -79,6 +97,7 @@ jobs:
             ${MAPS_API_KEY:+--dart-define=MAPS_API_KEY=$MAPS_API_KEY}
 
       - name: Publish GitHub Release
+        if: env.KEYSTORE_PATH != ''
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ZTCDv1.0BETA
