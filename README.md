@@ -52,10 +52,10 @@ Route tracking and AI-powered route optimization.
 | Feature | Details |
 |---|---|
 | **Live map** | Google Maps with dark automotive styling, centered on your current position |
-| **Route recording** | Tap **Start** to begin capturing GPS waypoints; tap **Stop** to save the route |
-| **Route history** | List of past routes with total distance, average damage score, and date |
+| **Live tracking toggle** | Tap **START TRACKING** / **STOP TRACKING** to turn real-time GPS tracking on or off for the map overlay (stopping tracking here does **not** save a route) |
+| **Saved routes & trips** | Routes are persisted by the **Damage Log** tab via its trip recording (TripService). Use that tab to start/stop a trip when you want it saved to history. |
 | **AI recommendations** | With a Gemini API key, tap **Suggest Route** for AI-generated alternatives based on traffic and your driving history |
-| **No API key** | Map still renders (with a Google watermark if `MAPS_API_KEY` is not set); route recording works fully offline |
+| **No API key** | Map still renders (with a Google watermark if `MAPS_API_KEY` is not set); live tracking works fully offline |
 
 ---
 
