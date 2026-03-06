@@ -28,7 +28,7 @@ Real-time vehicle diagnostics via OBD-II.
 |---|---|
 | **Connection modes** | Simulation (no hardware needed), Bluetooth Classic, USB Serial |
 | **Live data display** | RPM, speed, coolant temp, throttle position, and more standard PIDs |
-| **AI diagnostics** | Tap **Analyze** to send live OBD data to Google Gemini for a plain-language health report |
+| **AI diagnostics** | Tap **RUN AI DIAGNOSIS** to send live OBD data to Google Gemini for a plain-language health report |
 | **Demo mode** | When no Gemini API key is configured, the app returns a realistic demo response so you can still explore the UI |
 
 > ℹ️ **Simulation mode** is the default. It generates realistic OBD-II values so you can explore every feature without physical hardware.
