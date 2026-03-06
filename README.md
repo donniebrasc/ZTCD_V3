@@ -183,7 +183,7 @@ Trip history is stored in `SharedPreferences` on the device (no external databas
 ### ❓ Gemini returns "Demo Mode" — how do I enable live AI?
 
 **Cause:** No Gemini API key is configured.  
-**Fix:** Open **Settings** (gear icon, top-right of any tab) → paste your key in the *Gemini API Key* field → tap **Save**. The next **Analyze** call will use the live Gemini 2.5 Pro model.
+**Fix:** Open **Settings** (tune/sliders icon in the top-right of any tab) → paste your key in the *Gemini API Key* field → tap **Save**. The next **Analyze** call will use the live Gemini 2.5 Pro model.
 
 ---
 
