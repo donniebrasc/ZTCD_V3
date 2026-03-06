@@ -206,7 +206,7 @@ Trip history is stored in `SharedPreferences` on the device (no external databas
 | ⚠️ | Live GPS tracking requires a physical device with GPS |
 | ⚠️ | Live AI diagnostics & route suggestions require a Gemini API key |
 | ⚠️ | Full map tiles (no watermark) require a Google Maps API key |
-| ⚠️ | Bluetooth/USB OBD modes require a compatible ELM327 adapter |
+| 🚧 | Bluetooth/USB OBD modes are planned but **not yet supported**; attempts will currently error |
 | 📝 | Damage detection thresholds are currently hardcoded; customization requires a code change |
 
 ---
