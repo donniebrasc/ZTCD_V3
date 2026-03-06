@@ -170,7 +170,7 @@ Route recording and GPS tracking still work without a Maps key — only tile ren
 ### ❓ Damage events are not appearing
 
 **Cause:** The device's accelerometer/gyroscope are required. Android emulators typically do not emulate these sensors.  
-**Fix:** Run the app on a **physical Android device**, or use the built-in simulation mode which injects synthetic sensor data.
+**Fix:** Run the app on a **physical Android device** so that real accelerometer/gyroscope data is available. Only OBD-II data supports simulation; motion sensor data is always read from the device's sensors.
 
 ---
 
