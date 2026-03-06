@@ -63,7 +63,7 @@ Route tracking and AI-powered route optimization.
 
 ### Required tools
 
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) ≥ 3.0 (`flutter --version`)
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) ≥ 3.10 (Dart 3; see `pubspec.yaml` `environment`) (`flutter --version`)
 - Android SDK / Android Studio (or Xcode for iOS)
 - Java 17+ (required by Android Gradle Plugin 8)
 
