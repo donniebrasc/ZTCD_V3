@@ -133,9 +133,9 @@ Use this checklist to manually verify that all features work correctly after a f
 ### GPS Routes
 
 - [ ] **Live tracking**: Open GPS tab on a physical device with GPS → blue dot moves as you move
-- [ ] **Route recording**: Tap **Start** → move around → tap **Stop** → route appears in history with distance and damage summary
-- [ ] **Route history**: Saved routes persist after app restart
-- [ ] **AI route suggestion** *(requires Gemini API key)*: Tap **Suggest Route** → recommendation panel shows a route suggestion
+- [ ] **Start/Stop toggle**: Tap **Start** → move around → tap **Stop** → live tracking pauses/resumes; the GPS tab does **not** save a route when you stop
+- [ ] **No GPS route history**: Close and reopen the app → there is no list of past GPS routes; only your current live position is shown
+- [ ] **AI route suggestion** *(requires Gemini API key and history)*: After you have at least **2 recorded trips** (see Damage Log section), open GPS tab → tap **Suggest Route** → if there are 2+ trips, a recommendation panel shows a route suggestion; otherwise a snackbar explains that at least 2 trips are required
 - [ ] **No internet fallback**: Disable internet → open GPS tab → map tiles may be cached or blank, but the app does not crash
 
 ### Settings & Persistence
