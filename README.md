@@ -43,7 +43,7 @@ Driving behavior tracking and vehicle health scoring.
 | **Event detection** | Harsh braking, rapid acceleration, sharp cornering, overheating alerts |
 | **Trip recording** | Each trip is saved with GPS waypoints, timestamps, and a damage timeline |
 | **Persistence** | Trip history stored in `SharedPreferences`; survives app restarts |
-| **Chart view** | fl_chart line graph of damage score over the course of each trip |
+| **Chart view** | Live `fl_chart` line graph of recent damage scores (e.g. last ~60 points) during a session; saved trips currently do not have a per-trip chart view |
 
 ### 🗺️ GPS Routes Tab
 
