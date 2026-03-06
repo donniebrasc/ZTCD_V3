@@ -1,17 +1,108 @@
 # ZTCD_V3
-Comprehensive multi-platform Flutter app for diagnostics using OBD-II, phone sensors, GPS tracking, and AI-powered analysis via Google Gemini 2.5 Pro. Features Multi-transport OBD-II Connection: Bluetooth Classic, USB Serial, and  Comprehensive PID Support OBD-II   integration for automated vehicle diagnosis map display route recommendations
+
+**Zero-Touch Car Diagnostics** — a comprehensive Flutter app for real-time vehicle diagnostics using OBD-II, phone sensors, GPS tracking, and AI-powered analysis via Google Gemini 2.5 Pro.
 
 ---
 
-## Feature Overview
+## Table of Contents
 
-| Feature | Status | Description |
+1. [Features Overview](#features-overview)
+2. [Prerequisites & Setup](#prerequisites--setup)
+3. [Running the Tests](#running-the-tests)
+4. [Usage & Testing Checklist](#usage--testing-checklist)
+5. [Troubleshooting](#troubleshooting)
+6. [Features: Capabilities & Limitations](#features-capabilities--limitations)
+7. [Architecture Notes](#architecture-notes)
+8. [Signed Releases & CI/CD](#signed-android-releases)
+9. [Contributing](#contributing)
+
+---
+
+## Features Overview
+
+ZTCD_V3 is organized into three main tabs, each covering a different aspect of vehicle health and trip monitoring.
+
+### 🔌 OBD Diagnosis Tab
+
+Real-time vehicle diagnostics via OBD-II.
+
+| Feature | Details |
+|---|---|
+| **Connection modes** | Simulation (no hardware needed), Bluetooth Classic *(not yet implemented)*, USB Serial *(not yet implemented)* |
+| **Live data display** | RPM, speed, coolant temp, throttle position, and more standard PIDs |
+| **AI diagnostics** | Tap **RUN AI DIAGNOSIS** to send live OBD data to Google Gemini for a plain-language health report |
+| **Demo mode** | When no Gemini API key is configured, the app returns a realistic demo response so you can still explore the UI |
+
+> ℹ️ **Simulation mode** is the default. It generates realistic OBD-II values so you can explore every feature without physical hardware.
+
+### 📊 Damage Log Tab
+
+Driving behavior tracking and vehicle health scoring.
+
+| Feature | Details |
+|---|---|
+| **Damage score** | 0–100 score updated in real time from accelerometer & gyroscope data |
+| **Event detection** | Harsh braking, rapid acceleration, sharp cornering, overheating alerts |
+| **Trip recording** | Each trip is saved with GPS waypoints, timestamps, and a damage timeline |
+| **Persistence** | Trip history persisted to `trips.json` in the app documents directory via `TripService` (`path_provider`); survives app restarts |
+| **Chart view** | Live `fl_chart` line graph of recent damage scores (e.g. last ~60 points) during a session; saved trips currently do not have a per-trip chart view |
+
+### 🗺️ GPS Routes Tab
+
+Route tracking and AI-powered route optimization.
+
+| Feature | Details |
+|---|---|
+| **Live map** | Google Maps with dark automotive styling, centered on your current position |
+| **Live tracking toggle** | Tap **START TRACKING** / **STOP TRACKING** to turn real-time GPS tracking on or off for the map overlay (stopping tracking here does **not** save a route) |
+| **Saved routes & trips** | Routes are persisted by the **Damage Log** tab via its trip recording (TripService). Use that tab to start/stop a trip when you want it saved to history. |
+| **AI recommendations** | With a Gemini API key, tap **Suggest Route** for AI-generated alternatives based on traffic and your driving history |
+| **No API key** | Map still renders (with a Google watermark if `MAPS_API_KEY` is not set); live tracking works fully offline |
+
+---
+
+## Prerequisites & Setup
+
+### Required tools
+
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) ≥ 3.10 (Dart 3; see `pubspec.yaml` `environment`) (`flutter --version`)
+- Android SDK / Android Studio (or Xcode for iOS)
+- Java 17+ (required by Android Gradle Plugin 8)
+
+Run `flutter doctor` to confirm your toolchain is ready:
+
+```bash
+flutter doctor
+```
+
+### Optional API keys
+
+| Key | Where to get it | What it unlocks |
 |---|---|---|
-| OBD-II multi-transport | ✅ | Bluetooth Classic, USB Serial, and simulation mode |
-| Phone sensors | ✅ | Accelerometer + gyroscope for pothole/harsh-braking detection |
-| GPS tracking | ✅ | Route recording with waypoints and distance calculation |
-| AI analysis | ✅ | Google Gemini 2.5 Pro — demo mode fallback when no API key |
-| Settings persistence | ✅ | SharedPreferences-backed OBD address, Gemini key, thresholds |
+| **Gemini API key** | [ai.google.dev](https://ai.google.dev) (free tier available) | Live AI diagnostics & route recommendations |
+| **Google Maps API key** | [Google Cloud Console](https://console.cloud.google.com) → Maps SDK for Android | Full map tiles without watermark |
+
+The app runs fully without either key — simulation mode and demo AI responses cover all features.
+
+### Clone & run
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/donniebrasc/ZTCD_V3.git
+cd ZTCD_V3
+
+# 2. Install Flutter dependencies
+flutter pub get
+
+# 3. (Optional) Set your Gemini API key in the app
+#    Settings → API Key → paste your key → Save
+
+# 4. Run in debug mode on a connected device or emulator
+flutter run
+
+# Or build a debug APK
+flutter build apk --debug
+```
 
 ---
 
@@ -31,9 +122,91 @@ The test suite in `test/widget_test.dart` covers:
 
 ---
 
+## Usage & Testing Checklist
+
+Use this checklist to manually verify that all features work correctly after a fresh install or code change.
+
+### OBD Diagnosis
+
+- [ ] **Simulation mode**: Open the app → OBD tab → connection mode is set to *Simulation* → tap **Connect** → live data values appear and update every second
+- [ ] **Gemini demo mode**: Tap **Analyze** with no API key configured → response panel shows a realistic demo report (not an error)
+- [ ] **Gemini live mode**: Go to **Settings** → enter a valid Gemini API key → return to OBD tab → tap **Analyze** → response contains actual Gemini output specific to the displayed OBD data
+- [ ] **Bluetooth mode** *(not yet implemented)*: Switching to *Bluetooth* and tapping **Connect** will result in a connection error — Bluetooth and USB transports are not yet implemented
+- [ ] **USB mode** *(not yet implemented)*: Switch to *USB* → **Connect** will result in a connection error
+
+### Damage Log
+
+- [ ] **Score updates**: Navigate to Damage tab while simulation is running → damage score changes as simulated sensor data varies
+- [ ] **Event detection**: Physically shake the device (or simulate sensor spikes) → a new damage event entry appears in the log with a timestamp and event type
+- [ ] **Trip recording**: Tap **Start Trip** → drive (or let simulation run) for >30 seconds → tap **Stop Trip** → trip appears in history list
+- [ ] **Persistence**: Force-close the app → reopen → previous trips are still listed in Damage tab
+- [ ] **Chart view**: Tap a saved trip → damage-over-time chart renders without error
+
+### GPS Routes
+
+- [ ] **Live tracking**: Open GPS tab on a physical device with GPS → blue dot moves as you move
+- [ ] **Start/Stop toggle**: Tap **Start** → move around → tap **Stop** → live tracking pauses/resumes; the GPS tab does **not** save a route when you stop
+- [ ] **No GPS route history**: Close and reopen the app → there is no list of past GPS routes; only your current live position is shown
+- [ ] **AI route suggestion** *(requires Gemini API key and history)*: After you have at least **2 recorded trips** (see Damage Log section), open GPS tab → tap **Suggest Route** → if there are 2+ trips, a recommendation panel shows a route suggestion; otherwise a snackbar explains that at least 2 trips are required
+- [ ] **No internet fallback**: Disable internet → open GPS tab → map tiles may be cached or blank, but the app does not crash
+
+### Settings & Persistence
+
+- [ ] Enter an API key in Settings → close Settings → reopen → key is still present
+- [ ] Clear the API key → Analyze in OBD tab falls back to demo mode
+
+---
+
 ## Troubleshooting
 
-### Build fails with "Error parsing AndroidManifest.xml"
+### ❓ "OBD connection failed" / nothing happens after tapping Connect
+
+**Cause:** The default connection mode is *Simulation*, which always succeeds. If you switched to *Bluetooth* or *USB*, the connection will fail because these transports are not yet implemented in the app.  
+**Fix:** Switch connection mode back to **Simulation** in the OBD tab header.
+
+---
+
+### ❓ Map shows a watermark or gray tiles
+
+**Cause:** `MAPS_API_KEY` is not configured, or the key is not authorized for *Maps SDK for Android*.  
+**Fix:** Add your key as a GitHub Actions secret (`MAPS_API_KEY`) for CI builds, or inject it locally via `android/local.properties`:
+
+```
+MAPS_API_KEY=AIzaSy...
+```
+
+Route recording and GPS tracking still work without a Maps key — only tile rendering is affected.
+
+---
+
+### ❓ Damage events are not appearing
+
+**Cause:** The device's accelerometer/gyroscope are required. Android emulators typically do not emulate these sensors.  
+**Fix:** Run the app on a **physical Android device** so that real accelerometer/gyroscope data is available. Only OBD-II data supports simulation; motion sensor data is always read from the device's sensors.
+
+---
+
+### ❓ Where is my trip data saved?
+
+Trip history is stored in `trips.json` in the app's documents directory (via `path_provider`). Data persists until the app is uninstalled or the file is manually deleted.
+
+---
+
+### ❓ Gemini returns "Demo Mode" — how do I enable live AI?
+
+**Cause:** No Gemini API key is configured.  
+**Fix:** Open **Settings** (tune/sliders icon in the top-right of any tab) → paste your key in the *Gemini API Key* field → tap **Save**. The next **Analyze** call will use the live Gemini 2.5 Pro model.
+
+---
+
+### ❓ `flutter pub get` fails with a dependency conflict
+
+**Cause:** The vendored `flutter_bluetooth_serial` package has a broadened Dart SDK constraint; this is intentional. See [Architecture Notes](#architecture-notes) for details.  
+**Fix:** Ensure you are using Flutter SDK ≥ 3.0 (`flutter --version`) and run `flutter pub get` again.
+
+---
+
+### ❓ Build fails with "Error parsing AndroidManifest.xml"
 
 **Symptom:** `processDebugMainManifest` task fails with a `ManifestMerger2$MergeFailureException`.
 
@@ -41,19 +214,17 @@ The test suite in `test/widget_test.dart` covers:
 
 **Fix:** Ensure `gradle.properties` has `kotlinVersion=2.1.0` or higher (already set in this repo). The `build.gradle` resolves the placeholder to an empty string when no key is supplied, so the build succeeds without a Maps API key.
 
-### Kotlin version deprecation warning
+---
 
-**Symptom:** `Warning: Flutter support for your project's Kotlin version (1.9.10) will soon be dropped.`
-
-**Fix:** `gradle.properties` now declares `kotlinVersion=2.1.0`. No action required.
-
-### Google Maps shows "No API Key" watermark
+### ❓ Google Maps shows "No API Key" watermark (CI build)
 
 **Cause:** `MAPS_API_KEY` secret is not configured in the repository.
 
 **Fix:** Add the `MAPS_API_KEY` GitHub secret (see *Set GitHub Secrets* below). All app features other than the map tile display work without it.
 
-### Release build skipped in CI
+---
+
+### ❓ Release build skipped in CI
 
 **Cause:** One or more signing secrets are missing.
 
@@ -61,7 +232,26 @@ The test suite in `test/widget_test.dart` covers:
 
 ---
 
-## Vendored dependency: `flutter_bluetooth_serial`
+## Features: Capabilities & Limitations
+
+| Status | Feature |
+|---|---|
+| ✅ | OBD-II simulation mode — no hardware required |
+| ✅ | Sensor-based damage scoring (accelerometer & gyroscope) |
+| ✅ | Demo AI responses when no Gemini API key is set |
+| ✅ | Trip history persisted across app restarts |
+| ✅ | Dark-theme automotive UI |
+| ⚠️ | Live GPS tracking requires a physical device with GPS |
+| ⚠️ | Live AI diagnostics & route suggestions require a Gemini API key |
+| ⚠️ | Full map tiles (no watermark) require a Google Maps API key |
+| 🚧 | Bluetooth/USB OBD modes are planned but **not yet supported**; attempts will currently error |
+| 📝 | Damage detection thresholds are currently hardcoded; customization requires a code change |
+
+---
+
+## Architecture Notes
+
+### Vendored dependency: `flutter_bluetooth_serial`
 
 `flutter_bluetooth_serial` 0.4.0 (the latest published version) is missing the
 `android { namespace "..." }` declaration required by Android Gradle Plugin 8+.
@@ -148,3 +338,14 @@ If **none** of the signing secrets are configured the debug artifact is still pr
 4. Click **`app-debug-apk`** to download the ZIP containing `app-debug.apk`.
 
 > **Note:** The debug APK is signed with the Android debug key. It can be sideloaded on Android devices (enable *Install unknown apps* in Settings) but is **not suitable for Google Play Store distribution**.
+
+---
+
+## Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repo and create a feature branch from `main`.
+2. Run `flutter analyze` and `flutter test` before opening a pull request.
+3. Keep pull requests focused — one feature or fix per PR.
+4. If you are adding a new dependency, explain why an existing package cannot cover the use case.
