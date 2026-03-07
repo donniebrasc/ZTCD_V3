@@ -214,6 +214,65 @@ Trip history is stored in `trips.json` in the app's documents directory (via `pa
 ## Architecture Notes
 
 ### Vendored dependency: `flutter_bluetooth_serial`
+## Feature Overview
+
+| Feature | Status | Description |
+|---|---|---|
+| OBD-II multi-transport | ✅ | Bluetooth Classic, USB Serial, and simulation mode |
+| Phone sensors | ✅ | Accelerometer + gyroscope for pothole/harsh-braking detection |
+| GPS tracking | ✅ | Route recording with waypoints and distance calculation |
+| AI analysis | ✅ | Google Gemini 2.5 Pro — demo mode fallback when no API key |
+| Settings persistence | ✅ | SharedPreferences-backed OBD address, Gemini key, thresholds |
+
+---
+
+## Running the Tests
+
+```bash
+flutter pub get
+flutter test
+```
+
+The test suite in `test/widget_test.dart` covers:
+- App renders main scaffold with navigation bar
+- `OBDData` model — empty factory, JSON round-trip, prompt string
+- `DamageEvent` model — JSON round-trip for every event type, display names
+- `Trip` model — start, copyWith, JSON round-trip, duration
+- `LocationService.calculateDistance` — edge cases and haversine accuracy
+
+---
+
+## Troubleshooting
+
+### Build fails with "Error parsing AndroidManifest.xml"
+
+**Symptom:** `processDebugMainManifest` task fails with a `ManifestMerger2$MergeFailureException`.
+
+**Cause:** Flutter auto-upgrades `build.gradle` when it detects an outdated Kotlin version, stripping the `manifestPlaceholders` entry that resolves `${MAPS_API_KEY}`.
+
+**Fix:** Ensure `gradle.properties` has `kotlinVersion=2.1.0` or higher (already set in this repo). The `build.gradle` resolves the placeholder to an empty string when no key is supplied, so the build succeeds without a Maps API key.
+
+### Kotlin version deprecation warning
+
+**Symptom:** `Warning: Flutter support for your project's Kotlin version (1.9.10) will soon be dropped.`
+
+**Fix:** `gradle.properties` now declares `kotlinVersion=2.1.0`. No action required.
+
+### Google Maps shows "No API Key" watermark
+
+**Cause:** `MAPS_API_KEY` secret is not configured in the repository.
+
+**Fix:** Add the `MAPS_API_KEY` GitHub secret (see *Set GitHub Secrets* below). All app features other than the map tile display work without it.
+
+### Release build skipped in CI
+
+**Cause:** One or more signing secrets are missing.
+
+**Fix:** Configure all four signing secrets together — see *Set GitHub Secrets* below. The debug APK artifact is always produced even without signing secrets.
+
+---
+
+## Vendored dependency: `flutter_bluetooth_serial`
 
 `flutter_bluetooth_serial` 0.4.0 (the latest published version) is missing the
 `android { namespace "..." }` declaration required by Android Gradle Plugin 8+.
