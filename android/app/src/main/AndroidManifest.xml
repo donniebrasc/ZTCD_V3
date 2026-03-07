@@ -41,10 +41,9 @@
         </activity>
 
         <!-- Google Maps API Key.
-             Set at build time via: flutter build apk --dart-define=MAPS_API_KEY=AIza...
-             The Gradle build script reads MAPS_API_KEY and writes it here automatically.
-             For development without a key, the map widget shows a "No API Key" watermark
-             but all other features work normally. -->
+             Resolved at build time by the Gradle build script (android/app/build.gradle)
+             using the MAPS_API_KEY environment variable or Gradle project property.
+             Without a key, the map widget shows a watermark but all other features work. -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />

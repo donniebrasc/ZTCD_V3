@@ -157,7 +157,14 @@ Use this checklist to manually verify that all features work correctly after a f
 ### ❓ Map shows a watermark or gray tiles
 
 **Cause:** `MAPS_API_KEY` is not configured, or the key is not authorized for *Maps SDK for Android*.  
-**Fix:** Add your key as a GitHub Actions secret (`MAPS_API_KEY`) for CI builds. For local builds, add the key to `android/gradle.properties` (create the file if it does not exist):
+**Fix:** For CI/CD, set a `MAPS_API_KEY` repository secret in GitHub Actions. For local builds, export it as an environment variable before running Flutter:
+
+```bash
+export MAPS_API_KEY=AIzaSy...
+flutter build apk --debug
+```
+
+Alternatively, add it to `android/gradle.properties` (create the file if it does not exist):
 
 ```
 MAPS_API_KEY=AIzaSy...
@@ -248,9 +255,9 @@ The test suite in `test/widget_test.dart` covers:
 
 **Symptom:** `processDebugMainManifest` task fails with a `ManifestMerger2$MergeFailureException`.
 
-**Cause:** Flutter auto-upgrades `build.gradle` when it detects an outdated Kotlin version, stripping the `manifestPlaceholders` entry that resolves `${MAPS_API_KEY}`.
+**Cause:** An XML comment in `AndroidManifest.xml` contained a `--` sequence, which is invalid in XML comments and causes a parse error.
 
-**Fix:** Ensure `gradle.properties` has `kotlinVersion=2.1.0` or higher (already set in this repo). The `build.gradle` resolves the placeholder to an empty string when no key is supplied, so the build succeeds without a Maps API key.
+**Fix:** The comment has been corrected in this repo. No action required.
 
 ### Kotlin version deprecation warning
 
