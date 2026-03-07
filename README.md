@@ -26,7 +26,7 @@ Real-time vehicle diagnostics via OBD-II.
 
 | Feature | Details |
 |---|---|
-| **Connection modes** | Simulation (no hardware needed), Bluetooth Classic, USB Serial |
+| **Connection modes** | Simulation (no hardware needed), Bluetooth Classic *(not yet implemented)*, USB Serial *(not yet implemented)* |
 | **Live data display** | RPM, speed, coolant temp, throttle position, and more standard PIDs |
 | **AI diagnostics** | Tap **RUN AI DIAGNOSIS** to send live OBD data to Google Gemini for a plain-language health report |
 | **Demo mode** | When no Gemini API key is configured, the app returns a realistic demo response so you can still explore the UI |
@@ -54,7 +54,7 @@ Route tracking and AI-powered route optimization.
 | **Live map** | Google Maps with dark automotive styling, centered on your current position |
 | **Live tracking toggle** | Tap **START TRACKING** / **STOP TRACKING** to turn real-time GPS tracking on or off for the map overlay (stopping tracking here does **not** save a route) |
 | **Saved routes & trips** | Routes are persisted by the **Damage Log** tab via its trip recording (TripService). Use that tab to start/stop a trip when you want it saved to history. |
-| **AI recommendations** | With a Gemini API key, tap **Suggest Route** for AI-generated alternatives based on traffic and your driving history |
+| **AI recommendations** | With a Gemini API key, tap **Suggest Route** for AI-generated alternatives based on your driving history (requires at least 2 recorded trips) |
 | **No API key** | Map still renders (with a Google watermark if `MAPS_API_KEY` is not set); live tracking works fully offline |
 
 ---
@@ -119,8 +119,8 @@ Use this checklist to manually verify that all features work correctly after a f
 - [ ] **Simulation mode**: Open the app → OBD tab → connection mode is set to *Simulation* → tap **Connect** → live data values appear and update every second
 - [ ] **Gemini demo mode**: Tap **Analyze** with no API key configured → response panel shows a realistic demo report (not an error)
 - [ ] **Gemini live mode**: Go to **Settings** → enter a valid Gemini API key → return to OBD tab → tap **Analyze** → response contains actual Gemini output specific to the displayed OBD data
-- [ ] **Bluetooth mode** *(requires hardware)*: Switch connection mode to *Bluetooth* → pair with an ELM327 adapter → **Connect** succeeds and live PIDs appear
-- [ ] **USB mode** *(requires hardware)*: Switch to *USB* → plug in USB serial adapter → **Connect** succeeds
+- [ ] **Bluetooth mode** *(not yet implemented)*: Switch connection mode to *Bluetooth* → tap **Connect** → a connection error is expected; Bluetooth transport is not yet implemented
+- [ ] **USB mode** *(not yet implemented)*: Switch to *USB* → tap **Connect** → a connection error is expected; USB transport is not yet implemented
 
 ### Damage Log
 
@@ -128,7 +128,7 @@ Use this checklist to manually verify that all features work correctly after a f
 - [ ] **Event detection**: Physically shake the device (or simulate sensor spikes) → a new damage event entry appears in the log with a timestamp and event type
 - [ ] **Trip recording**: Tap **Start Trip** → drive (or let simulation run) for >30 seconds → tap **Stop Trip** → trip appears in history list
 - [ ] **Persistence**: Force-close the app → reopen → previous trips are still listed in Damage tab
-- [ ] **Chart view**: Tap a saved trip → damage-over-time chart renders without error
+- [ ] **Chart view**: While a trip is in progress, the live damage score chart updates on-screen; there is no per-trip chart view for saved trips
 
 ### GPS Routes
 
@@ -149,8 +149,8 @@ Use this checklist to manually verify that all features work correctly after a f
 
 ### ❓ "OBD connection failed" / nothing happens after tapping Connect
 
-**Cause:** The default connection mode is *Simulation*, which always succeeds. If you switched to *Bluetooth* or *USB* without hardware, the connection will fail.  
-**Fix:** Switch connection mode back to **Simulation** in the OBD tab header, or ensure the physical adapter is paired/plugged in.
+**Cause:** The default connection mode is *Simulation*, which always succeeds. If you switched to *Bluetooth* or *USB*, the connection will fail because these transports are not yet implemented in the app.  
+**Fix:** Switch connection mode back to **Simulation** in the OBD tab header.
 
 ---
 
@@ -176,7 +176,7 @@ Route recording and GPS tracking still work without a Maps key — only tile ren
 
 ### ❓ Where is my trip data saved?
 
-Trip history is stored in `SharedPreferences` on the device (no external database or server). Data persists until the app is uninstalled or **Settings → Clear Data** is used in Android system settings.
+Trip history is stored in `trips.json` in the app's documents directory (via `path_provider`). Data persists until the app is uninstalled or the file is manually deleted.
 
 ---
 
