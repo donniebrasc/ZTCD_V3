@@ -31,7 +31,7 @@ Real-time vehicle diagnostics via OBD-II.
 | **AI diagnostics** | Tap **RUN AI DIAGNOSIS** to send live OBD data to Google Gemini for a plain-language health report |
 | **Demo mode** | When no Gemini API key is configured, the app returns a realistic demo response so you can still explore the UI |
 
-> ℹ️ **Simulation mode** is the default. It generates realistic OBD-II values so you can explore every feature without physical hardware.
+> ℹ️ **Simulation mode** is the default. It generates realistic OBD-II values so you can explore most OBD-related UI flows without physical OBD hardware. Sensor-based features like harsh braking/turn detection (accelerometer/gyroscope) and reliable GPS route tracking still require a real device and sensors.
 
 ### 📊 Damage Log Tab
 
@@ -54,7 +54,7 @@ Route tracking and AI-powered route optimization.
 | **Live map** | Google Maps with dark automotive styling, centered on your current position |
 | **Live tracking toggle** | Tap **START TRACKING** / **STOP TRACKING** to turn real-time GPS tracking on or off for the map overlay (stopping tracking here does **not** save a route) |
 | **Saved routes & trips** | Routes are persisted by the **Damage Log** tab via its trip recording (TripService). Use that tab to start/stop a trip when you want it saved to history. |
-| **AI recommendations** | With a Gemini API key, tap **Suggest Route** for AI-generated alternatives based on your driving history (requires at least 2 recorded trips) |
+| **AI recommendations** | With a Gemini API key, tap **AI ROUTE RECOMMENDATION** for AI-generated alternatives based on your driving history (requires at least 2 recorded trips) |
 | **No API key** | Map still renders (with a Google watermark if `MAPS_API_KEY` is not set); live tracking works fully offline |
 
 ---
@@ -117,16 +117,16 @@ Use this checklist to manually verify that all features work correctly after a f
 ### OBD Diagnosis
 
 - [ ] **Simulation mode**: Open the app → OBD tab → connection mode is set to *Simulation* → tap **Connect** → live data values appear and update every second
-- [ ] **Gemini demo mode**: Tap **Analyze** with no API key configured → response panel shows a realistic demo report (not an error)
-- [ ] **Gemini live mode**: Go to **Settings** → enter a valid Gemini API key → return to OBD tab → tap **Analyze** → response contains actual Gemini output specific to the displayed OBD data
-- [ ] **Bluetooth mode** *(not yet implemented)*: Switch connection mode to *Bluetooth* → tap **Connect** → a connection error is expected; Bluetooth transport is not yet implemented
-- [ ] **USB mode** *(not yet implemented)*: Switch to *USB* → tap **Connect** → a connection error is expected; USB transport is not yet implemented
+- [ ] **Gemini demo mode**: Tap **RUN AI DIAGNOSIS** with no API key configured → response panel shows a realistic demo report (not an error)
+- [ ] **Gemini live mode**: Open **Settings** (tune/sliders icon in the top-right) → enter a valid Gemini API key → return to OBD tab → tap **RUN AI DIAGNOSIS** → response contains actual Gemini output specific to the displayed OBD data
+- [ ] **Bluetooth mode** *(not yet implemented)*: Switch connection mode to *Bluetooth* → tap **Connect** → app shows a **CONNECTION ERROR** state (Bluetooth transport not yet implemented; expected behavior)
+- [ ] **USB mode** *(not yet implemented)*: Switch to *USB* → tap **Connect** → app shows a **CONNECTION ERROR** state (USB transport not yet implemented; expected behavior)
 
 ### Damage Log
 
-- [ ] **Score updates**: Navigate to Damage tab while simulation is running → damage score changes as simulated sensor data varies
-- [ ] **Event detection**: Physically shake the device (or simulate sensor spikes) → a new damage event entry appears in the log with a timestamp and event type
-- [ ] **Trip recording**: Tap **Start Trip** → drive (or let simulation run) for >30 seconds → tap **Stop Trip** → trip appears in history list
+- [ ] **Score updates**: On a physical device, navigate to the Damage tab while driving or moving the phone → damage score changes in response to real accelerometer/gyroscope data. On an emulator, you can still verify engine-related events when OBD **Simulation** mode is active, but motion-based scores will not change.
+- [ ] **Event detection**: On a physical device, perform harsh braking/rapid turns while driving or firmly shake the device → a new damage event entry appears in the log with a timestamp and event type.
+- [ ] **Trip recording**: Tap **Start Trip** → on a physical device, drive or walk for >30 seconds so motion sensors produce data (on an emulator, run with OBD **Simulation** mode to record engine-related events only) → tap **Stop Trip** → trip appears in the history list.
 - [ ] **Persistence**: Force-close the app → reopen → previous trips are still listed in Damage tab
 - [ ] **Chart view**: While a trip is in progress, the live damage score chart updates on-screen; there is no per-trip chart view for saved trips
 
@@ -135,13 +135,13 @@ Use this checklist to manually verify that all features work correctly after a f
 - [ ] **Live tracking**: Open GPS tab on a physical device with GPS → blue dot moves as you move
 - [ ] **Start/Stop toggle**: Tap **Start** → move around → tap **Stop** → live tracking pauses/resumes; the GPS tab does **not** save a route when you stop
 - [ ] **No GPS route history**: Close and reopen the app → there is no list of past GPS routes; only your current live position is shown
-- [ ] **AI route suggestion** *(requires Gemini API key and history)*: After you have at least **2 recorded trips** (see Damage Log section), open GPS tab → tap **Suggest Route** → if there are 2+ trips, a recommendation panel shows a route suggestion; otherwise a snackbar explains that at least 2 trips are required
+- [ ] **AI route suggestion** *(requires Gemini API key and history)*: After you have at least **2 recorded trips** (see Damage Log section), open GPS tab → tap **AI ROUTE RECOMMENDATION** → if there are 2+ trips, a recommendation panel shows a route suggestion; otherwise a snackbar explains that at least 2 trips are required
 - [ ] **No internet fallback**: Disable internet → open GPS tab → map tiles may be cached or blank, but the app does not crash
 
 ### Settings & Persistence
 
 - [ ] Enter an API key in Settings → close Settings → reopen → key is still present
-- [ ] Clear the API key → Analyze in OBD tab falls back to demo mode
+- [ ] Clear the API key → tap **RUN AI DIAGNOSIS** in OBD tab → falls back to demo mode
 
 ---
 
@@ -149,21 +149,21 @@ Use this checklist to manually verify that all features work correctly after a f
 
 ### ❓ "OBD connection failed" / nothing happens after tapping Connect
 
-**Cause:** The default connection mode is *Simulation*, which always succeeds. If you switched to *Bluetooth* or *USB*, the connection will fail because these transports are not yet implemented in the app.  
-**Fix:** Switch connection mode back to **Simulation** in the OBD tab header.
+**Cause:** Only the *Simulation* transport is implemented in this version. *Bluetooth* and *USB* transports are not yet supported and will always result in a connection error, regardless of hardware pairing.  
+**Fix:** Switch connection mode back to **Simulation** in the OBD tab header. Physical Bluetooth/USB adapters are not supported in this release and do not need to be paired or plugged in.
 
 ---
 
 ### ❓ Map shows a watermark or gray tiles
 
 **Cause:** `MAPS_API_KEY` is not configured, or the key is not authorized for *Maps SDK for Android*.  
-**Fix:** Add your key as a GitHub Actions secret (`MAPS_API_KEY`) for CI builds, or inject it locally via `android/local.properties`:
+**Fix:** Add your key as a GitHub Actions secret (`MAPS_API_KEY`) for CI builds. For local builds, add the key to `android/gradle.properties` (create the file if it does not exist):
 
 ```
 MAPS_API_KEY=AIzaSy...
 ```
 
-Route recording and GPS tracking still work without a Maps key — only tile rendering is affected.
+GPS tracking and route recording still work without a Maps key — only map tile rendering is affected.
 
 ---
 
@@ -183,14 +183,14 @@ Trip history is stored in `trips.json` in the app's documents directory (via `pa
 ### ❓ Gemini returns "Demo Mode" — how do I enable live AI?
 
 **Cause:** No Gemini API key is configured.  
-**Fix:** Open **Settings** (tune/sliders icon in the top-right of any tab) → paste your key in the *Gemini API Key* field → tap **Save**. The next **Analyze** call will use the live Gemini 2.5 Pro model.
+**Fix:** Open **Settings** (tune/sliders icon in the top-right of any tab) → paste your key in the *Gemini API Key* field → tap **Save**. The next **RUN AI DIAGNOSIS** call will use the live Gemini 2.5 Pro model.
 
 ---
 
 ### ❓ `flutter pub get` fails with a dependency conflict
 
 **Cause:** The vendored `flutter_bluetooth_serial` package has a broadened Dart SDK constraint; this is intentional. See [Architecture Notes](#architecture-notes) for details.  
-**Fix:** Ensure you are using Flutter SDK ≥ 3.0 (`flutter --version`) and run `flutter pub get` again.
+**Fix:** Ensure you are using Flutter SDK ≥ 3.10 (`flutter --version`) and run `flutter pub get` again.
 
 ---
 
