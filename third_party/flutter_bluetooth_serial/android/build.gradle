@@ -8,7 +8,7 @@ version '1.0-SNAPSHOT'
 android {
     // Required by AGP 8+: namespace replaces the 'package' attribute in AndroidManifest.xml
     namespace 'io.github.edufolly.flutterbluetoothserial'
-    compileSdkVersion 34
+    compileSdk 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -16,11 +16,11 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
+        minSdk 19
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    lintOptions {
+    lint {
         disable 'InvalidPackage'
     }
 
