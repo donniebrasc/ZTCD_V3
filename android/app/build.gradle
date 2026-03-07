@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.ztcd.app"
-    compileSdk 34
+    compileSdk 36
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -42,7 +42,7 @@ android {
     defaultConfig {
         applicationId "com.ztcd.app"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
