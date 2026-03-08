@@ -41,16 +41,17 @@ android {
 
     defaultConfig {
         applicationId "com.ztcd.app"
-        minSdkVersion 21
-        targetSdkVersion 36
+        minSdk 21
+        targetSdk 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
 
         // Resolve ${MAPS_API_KEY} placeholder in AndroidManifest.xml.
-        // Populated by: flutter build apk --dart-define=MAPS_API_KEY=AIza...
+        // Reads from: environment variable MAPS_API_KEY (CI/CD) or Gradle project
+        // property -PMAPS_API_KEY (local builds via android/gradle.properties).
         // Falls back to empty string so the app still launches without a key.
-        def mapsKey = project.findProperty('MAPS_API_KEY') ?: ''
+        def mapsKey = System.getenv('MAPS_API_KEY') ?: project.findProperty('MAPS_API_KEY') ?: ''
         manifestPlaceholders = [MAPS_API_KEY: mapsKey]
     }
 

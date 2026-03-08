@@ -1,9 +1,9 @@
-group 'io.github.edufolly.flutterbluetoothserial'
-version '1.0-SNAPSHOT'
-
 plugins {
     id 'com.android.library'
 }
+
+group 'io.github.edufolly.flutterbluetoothserial'
+version '1.0-SNAPSHOT'
 
 android {
     // Required by AGP 8+: namespace replaces the 'package' attribute in AndroidManifest.xml
