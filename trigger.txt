@@ -1,0 +1,3 @@
+# Triggering workflow by pushing a commit
+
+This commit is meant to trigger the release workflow for building the APK.
