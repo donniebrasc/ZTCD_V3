@@ -47,12 +47,16 @@ android {
         versionName flutterVersionName
         multiDexEnabled true
 
-        // Resolve ${MAPS_API_KEY} placeholder in AndroidManifest.xml.
-        // Reads from: environment variable MAPS_API_KEY (CI/CD) or Gradle project
+        // Resolve manifest placeholders used in AndroidManifest.xml.
+        // MAPS_API_KEY: reads from environment variable (CI/CD) or Gradle project
         // property -PMAPS_API_KEY (local builds via android/gradle.properties).
         // Falls back to empty string so the app still launches without a key.
+        // applicationName: required by the Flutter embedding; must always be provided.
         def mapsKey = System.getenv('MAPS_API_KEY') ?: project.findProperty('MAPS_API_KEY') ?: ''
-        manifestPlaceholders = [MAPS_API_KEY: mapsKey]
+        manifestPlaceholders = [
+            applicationName: "io.flutter.app.FlutterMultiDexApplication",
+            MAPS_API_KEY: mapsKey,
+        ]
     }
 
     signingConfigs {
