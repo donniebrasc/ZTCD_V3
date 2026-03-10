@@ -52,7 +52,10 @@ android {
         // property -PMAPS_API_KEY (local builds via android/gradle.properties).
         // Falls back to empty string so the app still launches without a key.
         def mapsKey = System.getenv('MAPS_API_KEY') ?: project.findProperty('MAPS_API_KEY') ?: ''
-        manifestPlaceholders = [MAPS_API_KEY: mapsKey]
+        manifestPlaceholders = [
+            applicationName: "io.flutter.app.FlutterMultiDexApplication",
+            MAPS_API_KEY: mapsKey
+        ]
     }
 
     signingConfigs {
