@@ -45,7 +45,6 @@ android {
         targetSdk 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        multiDexEnabled true
 
         // Resolve manifest placeholders used in AndroidManifest.xml.
         // MAPS_API_KEY: reads from environment variable (CI/CD) or Gradle project
@@ -54,7 +53,10 @@ android {
         // applicationName: required by the Flutter embedding; must always be provided.
         def mapsKey = System.getenv('MAPS_API_KEY') ?: project.findProperty('MAPS_API_KEY') ?: ''
         manifestPlaceholders = [
-            applicationName: "io.flutter.app.FlutterMultiDexApplication",
+            // io.flutter.app.FlutterApplication is the standard Flutter application
+            // class.  minSdk 21+ has native multidex support, so the old
+            // FlutterMultiDexApplication class is unnecessary.
+            applicationName: "io.flutter.app.FlutterApplication",
             MAPS_API_KEY: mapsKey,
         ]
     }
@@ -85,6 +87,7 @@ android {
             signingConfig keystorePath ? signingConfigs.release : signingConfigs.debug
             minifyEnabled true
             shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

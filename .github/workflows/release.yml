@@ -91,8 +91,11 @@ jobs:
           # Artifact is debug-signed; suitable for sideloading and testing only.
           path: build/app/outputs/flutter-apk/app-debug.apk
 
+      # Release APK – always built.  When KEYSTORE_PATH is set it uses the
+      # production keystore; otherwise it falls back to the debug keystore
+      # (already wired up in build.gradle signingConfigs).  Both variants
+      # are installable; only the production-signed one is published.
       - name: Build release APK
-        if: env.KEYSTORE_PATH != ''
         env:
           KEYSTORE_PATH: ${{ env.KEYSTORE_PATH }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -103,6 +106,12 @@ jobs:
           set -euo pipefail
           flutter build apk --release \
             ${MAPS_API_KEY:+--dart-define=MAPS_API_KEY=$MAPS_API_KEY}
+
+      - name: Upload release APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Publish GitHub Release
         if: env.KEYSTORE_PATH != ''
