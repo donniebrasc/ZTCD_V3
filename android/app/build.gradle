@@ -94,5 +94,7 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${project.findProperty('kotlinVersion') ?: '1.9.10'}"
+    // kotlin-stdlib-jdk7/jdk8 were merged into kotlin-stdlib in Kotlin 1.8+.
+    // Only the base artifact is needed for Kotlin 2.x.
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${project.findProperty('kotlinVersion') ?: '1.9.10'}"
 }

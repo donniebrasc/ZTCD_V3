@@ -74,8 +74,8 @@ jobs:
             echo "KEYSTORE_PATH=${KEYSTORE_PATH}" >> "$GITHUB_ENV"
           fi
 
-      # Debug APK – always built; does not require any signing secrets.
-      # Download from: Actions run → Artifacts → app-debug-apk
+      # Debug APK – always built; useful for quick CI sanity checks.
+      # For installing on a device, prefer the release APK artifact below.
       - name: Build debug APK
         env:
           MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
@@ -88,11 +88,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          # Artifact is debug-signed; suitable for sideloading and testing only.
           path: build/app/outputs/flutter-apk/app-debug.apk
 
+      # Release APK – always built for Android (arm64-v8a + armeabi-v7a).
+      # When signing secrets are absent the build.gradle falls back to the
+      # debug keystore so the APK is still installable via sideloading.
+      # A properly keystore-signed build is only published as a GitHub
+      # Release (see the "Publish GitHub Release" step below).
       - name: Build release APK
-        if: env.KEYSTORE_PATH != ''
         env:
           KEYSTORE_PATH: ${{ env.KEYSTORE_PATH }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -103,6 +106,14 @@ jobs:
           set -euo pipefail
           flutter build apk --release \
             ${MAPS_API_KEY:+--dart-define=MAPS_API_KEY=$MAPS_API_KEY}
+
+      # Always upload the release APK so it can be downloaded and sideloaded
+      # on any Android device (enable "Install unknown apps" in Settings first).
+      - name: Upload release APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Publish GitHub Release
         if: env.KEYSTORE_PATH != ''
