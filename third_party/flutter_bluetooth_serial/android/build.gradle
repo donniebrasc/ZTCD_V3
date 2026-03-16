@@ -8,7 +8,7 @@ version '1.0-SNAPSHOT'
 android {
     // Required by AGP 8+: namespace replaces the 'package' attribute in AndroidManifest.xml
     namespace 'io.github.edufolly.flutterbluetoothserial'
-    compileSdk 34
+    compileSdk 36
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

@@ -15,9 +15,6 @@
     <!-- Network -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- USB OBD adapter -->
-    <uses-permission android:name="android.permission.USB_PERMISSION" />
-
     <application
         android:label="ZTCD"
         android:name="${applicationName}"
