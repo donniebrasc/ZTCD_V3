@@ -43,6 +43,9 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
+      - name: Clean Gradle caches
+        run: rm -rf ~/.gradle/caches
+
       - name: Install Android SDK 36
         run: |
           echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-36"
