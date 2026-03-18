@@ -1,3 +1,5 @@
+ext.kotlin_version = project.findProperty('kotlinVersion') ?: '2.3.10'
+
 allprojects {
     repositories {
         google()
