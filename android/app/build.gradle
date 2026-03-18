@@ -45,6 +45,7 @@ android {
         targetSdk 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
 
         // Resolve manifest placeholders used in AndroidManifest.xml.
         // MAPS_API_KEY: reads from environment variable (CI/CD) or Gradle project
@@ -53,10 +54,7 @@ android {
         // applicationName: required by the Flutter embedding; must always be provided.
         def mapsKey = System.getenv('MAPS_API_KEY') ?: project.findProperty('MAPS_API_KEY') ?: ''
         manifestPlaceholders = [
-            // io.flutter.app.FlutterApplication is the standard Flutter application
-            // class.  minSdk 21+ has native multidex support, so the old
-            // FlutterMultiDexApplication class is unnecessary.
-            applicationName: "io.flutter.app.FlutterApplication",
+            applicationName: "io.flutter.app.FlutterMultiDexApplication",
             MAPS_API_KEY: mapsKey,
         ]
     }
@@ -97,5 +95,7 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${project.findProperty('kotlinVersion') ?: '1.9.10'}"
+    // kotlin-stdlib-jdk7/jdk8 were merged into kotlin-stdlib in Kotlin 1.8+.
+    // Only the base artifact is needed for Kotlin 2.x.
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${project.findProperty('kotlinVersion') ?: '1.9.10'}"
 }
