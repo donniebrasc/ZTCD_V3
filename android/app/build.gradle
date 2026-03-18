@@ -47,16 +47,12 @@ android {
         versionName flutterVersionName
         multiDexEnabled true
 
-        // Resolve manifest placeholders used in AndroidManifest.xml.
-        // MAPS_API_KEY: reads from environment variable (CI/CD) or Gradle project
+        // Resolve ${MAPS_API_KEY} placeholder in AndroidManifest.xml.
+        // Reads from: environment variable MAPS_API_KEY (CI/CD) or Gradle project
         // property -PMAPS_API_KEY (local builds via android/gradle.properties).
         // Falls back to empty string so the app still launches without a key.
-        // applicationName: required by the Flutter embedding; must always be provided.
         def mapsKey = System.getenv('MAPS_API_KEY') ?: project.findProperty('MAPS_API_KEY') ?: ''
-        manifestPlaceholders = [
-            applicationName: "io.flutter.app.FlutterMultiDexApplication",
-            MAPS_API_KEY: mapsKey,
-        ]
+        manifestPlaceholders = [MAPS_API_KEY: mapsKey]
     }
 
     signingConfigs {
@@ -95,7 +91,5 @@ flutter {
 }
 
 dependencies {
-    // kotlin-stdlib-jdk7/jdk8 were merged into kotlin-stdlib in Kotlin 1.8+.
-    // Only the base artifact is needed for Kotlin 2.x.
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:${project.findProperty('kotlinVersion') ?: '1.9.10'}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${project.findProperty('kotlinVersion') ?: '1.9.10'}"
 }
