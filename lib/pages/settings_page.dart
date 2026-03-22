@@ -106,7 +106,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 const SizedBox(height: 16),
 
                 // ── Gemini section ─────────────────────────────────────
-                _SectionHeader(title: 'GOOGLE GEMINI AI'),
+                const _SectionHeader(title: 'GOOGLE GEMINI AI'),
                 const SizedBox(height: 10),
                 TextFormField(
                   controller: _geminiKeyCtrl,
@@ -171,7 +171,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 const SizedBox(height: 20),
 
                 // ── Maps section ───────────────────────────────────────
-                _SectionHeader(title: 'GOOGLE MAPS'),
+                const _SectionHeader(title: 'GOOGLE MAPS'),
                 const SizedBox(height: 10),
                 TextFormField(
                   controller: _mapsKeyCtrl,
@@ -237,7 +237,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 const SizedBox(height: 32),
 
                 // ── Build info ─────────────────────────────────────────
-                _SectionHeader(title: 'BUILD INFO'),
+                const _SectionHeader(title: 'BUILD INFO'),
                 const SizedBox(height: 10),
                 _InfoRow(
                     label: 'VERSION',

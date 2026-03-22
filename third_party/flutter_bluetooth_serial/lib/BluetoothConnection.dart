@@ -111,7 +111,7 @@ class _BluetoothStreamSink<Uint8List> extends StreamSink<Uint8List> {
     _doneFuture = Future(() async {
       // @TODO ? is there any better way to do it? xD this below is weird af
       while (this.isConnected) {
-        await Future.delayed(Duration(milliseconds: 111));
+        await Future.delayed(const Duration(milliseconds: 111));
       }
       if (this.exception != null) {
         throw this.exception;

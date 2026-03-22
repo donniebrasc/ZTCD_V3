@@ -113,7 +113,7 @@ class FlutterBluetoothSerial {
         throw "pairing request handler already registered";
       }
       setPairingRequestHandler((BluetoothPairingRequest request) async {
-        Future.delayed(Duration(seconds: 1), () {
+        Future.delayed(const Duration(seconds: 1), () {
           setPairingRequestHandler(null);
         });
         if (pin != null) {
@@ -272,7 +272,7 @@ class FlutterBluetoothSerial {
   @Deprecated(
       'Use `BluetoothConnection.output` with some decoding (such as `ascii.decode` for strings) instead')
   Future<void> write(String message) {
-    _defaultConnection!.output.add(utf8.encode(message) as Uint8List);
+    _defaultConnection!.output.add(utf8.encode(message));
     return _defaultConnection!.output.allSent;
   }
 

@@ -258,7 +258,7 @@ class _GpsRoutesPageState extends State<GpsRoutesPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (_tracking) ...[
-                              StatusLed(color: AppTheme.racingRed),
+                              const StatusLed(color: AppTheme.racingRed),
                               const SizedBox(width: 6),
                             ],
                             Icon(

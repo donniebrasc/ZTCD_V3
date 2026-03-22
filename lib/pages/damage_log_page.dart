@@ -131,7 +131,7 @@ class _DamageLogPageState extends State<DamageLogPage> {
                     if (isRecording)
                       Row(
                         children: [
-                          StatusLed(color: AppTheme.racingRed),
+                          const StatusLed(color: AppTheme.racingRed),
                           const SizedBox(width: 6),
                           Text(
                             'RECORDING',
